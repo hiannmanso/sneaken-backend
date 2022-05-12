@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import chalk from 'chalk';
-
+import productsRouter from './Routers/productsRouter.js';
 import signInRouter from './Routers/signInRouter.js';
 import signUpRouter from './Routers/signUpRouter.js';
 
@@ -13,6 +13,8 @@ app.use(signInRouter);
 app.get('/', (req, res) => {
 	res.send('app no ar');
 });
+
+app.use(productsRouter);
 
 app.listen(process.env.PORT, () => {
 	console.log(
