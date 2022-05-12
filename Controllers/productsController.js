@@ -11,13 +11,20 @@ let itemSchema = Joi.object({
 
 export async function productsPOST(req, res){
     let item = req.body;
-    let header = req.headers.auth;
     let { error } = itemSchema.validate(item);
-    if(error === undefined){
+    const { authorization } = req.headers;
+	const token = authorization?.replace('Bearer', '').trim();
+    if(error === undefined && token){
         try{
-            await database.collection('products').insertOne(item);
-            res.sendStatus(201); 
-        } catch {
+            let access = await database.collection('session').find({token: token}).toArray();
+            if(access.length !== 0){
+                await database.collection('products').insertOne(item);
+                res.sendStatus(201);
+            } else {
+                res.sendStatus(404);
+            }
+        } catch(e) {
+            console.log(e);
             res.sendStatus(500);
         }         
     } else {
@@ -26,10 +33,21 @@ export async function productsPOST(req, res){
 };
 
 export async function productsGET(req, res){
-    try{
-        let products = await database.collection('products').find().toArray();
-        res.send(products);
-    } catch {
-        res.sendStatus(500);
+    const { authorization } = req.headers;
+	const token = authorization?.replace('Bearer', '').trim();
+    if(token){
+        try{
+            let access = await database.collection('session').find({token: token}).toArray();
+            if(access.length !== 0){
+                let products = await database.collection('products').find().toArray();
+                res.send(products);
+            } else {
+                res.sendStatus(404);
+            }
+        } catch {
+            res.sendStatus(500);
+        }
+    } else {
+        res.sendStatus(422);
     }
 }

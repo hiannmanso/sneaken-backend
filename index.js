@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import chalk from 'chalk';
-import productsRouter from './Router/productsRouter.js';
+import productsRouter from './Routers/productsRouter.js';
 import signInRouter from './Routers/signInRouter.js';
 import signUpRouter from './Routers/signUpRouter.js';
 
