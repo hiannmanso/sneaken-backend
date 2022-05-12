@@ -23,3 +23,12 @@ export async function productsPOST(req, res){
         res.sendStatus(422);
     }
 };
+
+export async function productsGET(req, res){
+    try{
+        let products = await database.collection('products').find().toArray();
+        res.send(products);
+    } catch {
+        res.sendStatus(500);
+    }
+}
