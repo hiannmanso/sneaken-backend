@@ -11,6 +11,7 @@ let itemSchema = Joi.object({
 
 export async function productsPOST(req, res){
     let item = req.body;
+    let header = req.headers.auth;
     let { error } = itemSchema.validate(item);
     if(error === undefined){
         try{
