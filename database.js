@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 let database = null;
-const mongocliente = new MongoClient(process.env.MONGO_URL);
+const mongocliente = new MongoClient(process.env.MONGO_URI);
 try {
 	await mongocliente.connect();
 	database = mongocliente.db('sneaken');
