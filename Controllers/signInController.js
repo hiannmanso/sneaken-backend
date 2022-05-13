@@ -1,5 +1,3 @@
-import express from 'express';
-import Joi from 'joi';
 import { v4 } from 'uuid';
 import database from '../database.js';
 import bcrypt from 'bcrypt';
@@ -40,13 +38,13 @@ export async function signInGET(req, res) {
 	try {
 		const session = await database.collection('session').findOne({ token });
 		if (!session)
-			return res.status(200).send(`usuário não encontrado: ${user}`);
+			return res.status(200).send(`usuário não encontrado: ${session}`);
 		const account = await database
 			.collection('accounts')
-			.findOne({ _id: new ObjectId(session.userID) });
+			.findOne({ _id: ObjectId(session.userID) });
 		delete account.password;
 		res.status(200).send(account);
 	} catch (error) {
-		res.status(400).send(`erro em pegar dados do usuário: ${error}`);
+		res.status(400).send(`erro em pegar dados do usuário: ${error} ${session}, ${account}`);
 	}
 }
