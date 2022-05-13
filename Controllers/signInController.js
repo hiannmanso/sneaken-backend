@@ -41,10 +41,10 @@ export async function signInGET(req, res) {
 			return res.status(200).send(`usuário não encontrado: ${session}`);
 		const account = await database
 			.collection('accounts')
-			.findOne({ _id: new ObjectId(session.userID) });
+			.findOne({ _id: ObjectId(session.userID) });
 		delete account.password;
 		res.status(200).send(account);
 	} catch (error) {
-		res.status(400).send(`erro em pegar dados do usuário: ${error}`);
+		res.status(400).send(`erro em pegar dados do usuário: ${error} ${session}, ${account}`);
 	}
 }
