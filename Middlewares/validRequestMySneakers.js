@@ -1,7 +1,7 @@
 import joi from 'joi';
 
 export default async function validRequestMySneakers(req, res, next) {
-	const { brand, model, amount, price, size, color } = req.body;
+	const { brand, model, amount, price, size } = req.body;
 	const mySneakerSchema = joi.object({
 		brand: joi
 			.string()
@@ -17,13 +17,13 @@ export default async function validRequestMySneakers(req, res, next) {
 			.required(),
 		price: joi
 			.string()
-			.pattern(/^[0-9]{1,}\.[0-9]{2}$/)
+			.pattern(/^[0-9]{1,}\,[0-9]{2}$/)
 			.required(),
 		size: joi
 			.string()
 			.pattern(/^[0-9]{1,2}$/)
 			.required(),
-		color: joi.string().required(),
+		// color: joi.string().required(),
 	});
 	const validation = mySneakerSchema.validate(req.body);
 	if (validation.error) return res.status(400).send(`${validation.error}`);

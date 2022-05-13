@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import database from '../database.js';
 
 export async function mySneakersPOST(req, res) {
-	const { brand, model, amount, price, size, color } = req.body;
+	const { brand, model, amount, price, size } = req.body;
 	const { userID, name } = req.headers;
 
 	//627c510511dfd0d3b9651510 id pra teste
@@ -80,21 +80,21 @@ export async function mySneakersDELETE(req, res) {
 }
 
 //ARRUMAR ESSA FUNÇÃO DE EDIT (botar os parametros de edição certinho)
-export async function mySneakersPUT(req, res) {
-	const { sneakerID } = req.headers;
-	const { amount } = req.body;
-	try {
-		const editRequest = await database
-			.collection('mysneakers')
-			.findOneAndUpdate(
-				{
-					_id: new ObjectId(sneakerID),
-				},
-				{ $set: { amount } }
-			);
-	} catch (error) {
-		res.status(400).send(`Erro ao editar item: ${error}`);
-	}
-}
+// export async function mySneakersPUT(req, res) {
+// 	const { sneakerID } = req.headers;
+// 	const { amount, size } = req.body;
+// 	try {
+// 		const editRequest = await database
+// 			.collection('mysneakers')
+// 			.findOneAndUpdate(
+// 				{
+// 					_id: new ObjectId(sneakerID),
+// 				},
+// 				{ $set: { size, amount } }
+// 			);
+// 	} catch (error) {
+// 		res.status(400).send(`Erro ao editar item: ${error}`);
+// 	}
+// }
 
 //TO DO:: MIDDLEWARE DE VALIDAÇÃO SE O USUÁRIO QUE ESTÁ FAZENDO ESSAS REQUEST É O MESMO USUÁRIO LOGADO
