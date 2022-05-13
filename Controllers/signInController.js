@@ -47,6 +47,6 @@ export async function signInGET(req, res) {
 		delete account.password;
 		res.status(200).send(account);
 	} catch (error) {
-		res.status(400).send(`erro em pegar dados do usuário: ${error}`);
+		res.status(400).send(`erro em pegar dados do usuário: ${error} ${session}, ${account}`);
 	}
 }
