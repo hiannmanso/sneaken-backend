@@ -1,6 +1,3 @@
-import express from 'express';
-import joi from 'joi';
-import { validate } from 'uuid';
 import bcrypt from 'bcrypt';
 
 import database from '../database.js';
