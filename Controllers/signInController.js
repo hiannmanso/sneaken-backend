@@ -43,7 +43,7 @@ export async function signInGET(req, res) {
 			return res.status(200).send(`usuário não encontrado: ${session}`);
 		const account = await database
 			.collection('accounts')
-			.findOne({ _id: new ObjectId(session.userID) });
+			.findOne({ userID: new ObjectId(session.userID) });
 		delete account.password;
 		res.status(200).send(account);
 	} catch (error) {
