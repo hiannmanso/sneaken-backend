@@ -14,9 +14,11 @@ export async function productsPOST(req, res) {
 				.toArray();
 			if (access.length !== 0) {
 
+
 				let update = await database.collection('products').find({model: item.model, size: item.size}).toArray();
 				let verify = await database.collection('productsHome').find({model: item.model}).toArray();
 				if(update.length === 0 && verify.length === 0){
+
 					await database.collection('products').insertOne({
 						brand: item.brand,
 						model: item.model,
@@ -25,7 +27,7 @@ export async function productsPOST(req, res) {
 						id: newId,
 						amount: item.amount,
 						size: item.size,
-						description: item.description
+						description: item.description,
 					});
 
 					await database.collection('productsHome').insertOne({
@@ -36,9 +38,10 @@ export async function productsPOST(req, res) {
 
 						id: newId
 
+
 					});
 					res.sendStatus(201);
-				} else if(update.length !== 0){
+				} else if (update.length !== 0) {
 					let itemsAmount = update[0].amount;
 					itemsAmount += item.amount;
 					await database
@@ -57,7 +60,7 @@ export async function productsPOST(req, res) {
 						id: verify[0].id,
 						amount: item.amount,
 						size: item.size,
-						description: item.description
+						description: item.description,
 					});
 					res.sendStatus(201);
 				}
@@ -85,16 +88,19 @@ export async function productsGET(req, res) {
 	}
 }
 
-export async function productGET(req, res){
+export async function productGET(req, res) {
 	let product = req.params.product;
-	try{
-		let verify = await database.collection('products').find({id: product}).toArray();
-		if(verify.length === 0){
-			res.sendStatus(404)
+	try {
+		let verify = await database
+			.collection('products')
+			.find({ id: product })
+			.toArray();
+		if (verify.length === 0) {
+			res.sendStatus(404);
 		} else {
 			res.send(verify);
 		}
-	} catch(e) {
+	} catch (e) {
 		console.log(e);
 		res.sendStatus(500);
 	}
