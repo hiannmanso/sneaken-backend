@@ -12,8 +12,15 @@ export async function productsPOST(req, res) {
 				.toArray();
 			if (access.length !== 0) {
 				let update = await database.collection('products').find({model: item.model, size: item.size}).toArray();
-				if(update.length === 0){
+				let verify = await database.collection('productsHome').find({model: item.model}).toArray();
+				if(update.length === 0 && verify.length === 0){
 					await database.collection('products').insertOne(item);
+					await database.collection('productsHome').insertOne({
+						brand: item.brand,
+						model: item.model,
+						image: item.image,
+						price: item.price
+					});
 					res.sendStatus(201);
 				} else {
 					let itemsAmount = update[0].amount;
