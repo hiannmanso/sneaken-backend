@@ -3,11 +3,6 @@ import database from '../database.js';
 export async function productsPOST(req, res) {
 	let item = req.body;
 	const { authorization } = req.headers;
-	const newObj = {
-		model: item.model,
-		price: item.price,
-		image: item.image,
-	};
 	const token = authorization?.replace('Bearer', '').trim();
 	if (token) {
 		try {
@@ -16,9 +11,18 @@ export async function productsPOST(req, res) {
 				.find({ token: token })
 				.toArray();
 			if (access.length !== 0) {
-				await database.collection('products').insertOne(item);
-				await database.collection('productsHome').insertOne(newObj);
-				res.sendStatus(201);
+				let update = await database.collection('products').find({model: item.model}).toArray();
+				if(update.length === 0){
+					await database.collection('products').insertOne(item);
+					res.sendStatus(201);
+				} else {
+					let stockArray = update[0].amount;
+					for(let i = 0; i<item.amount.length;i++){
+						stockArray.push(item.amount[i]);
+					}
+					await database.collection('products').updateOne({model: item.model}, {$set:{amount: stockArray}});
+					res.sendStatus(201);
+				}
 			} else {
 				res.sendStatus(404);
 			}
