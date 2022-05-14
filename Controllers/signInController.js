@@ -37,8 +37,7 @@ export async function signInGET(req, res) {
 		return res.status(400).send(`erro em encontrar o token: ${token}`);
 	try {
 		const session = await database.collection('session').findOne({ token });
-		if (!session)
-			return res.status(401).send(`usuário não encontrado: ${token}`);
+		if (!session) return res.status(400).send(`token: ${token}`);
 		const account = await database
 			.collection('accounts')
 			.findOne({ _id: ObjectId(session.userId) });
