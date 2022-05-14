@@ -5,5 +5,4 @@ import { validProducts } from '../Middlewares/validProducts.js';
 const productsRouter = express.Router();
 productsRouter.post('/products', validProducts, productsPOST);
 productsRouter.get('/products', productsGET);
-
 export default productsRouter;
