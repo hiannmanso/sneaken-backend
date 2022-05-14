@@ -11,16 +11,21 @@ export async function productsPOST(req, res) {
 				.find({ token: token })
 				.toArray();
 			if (access.length !== 0) {
-				let update = await database.collection('products').find({model: item.model}).toArray();
-				if(update.length === 0){
+				let update = await database.collection('products').find({model: item.model, size: item.size}).toArray();
+				let verify = await database.collection('productsHome').find({model: item.model}).toArray();
+				if(update.length === 0 && verify.length === 0){
 					await database.collection('products').insertOne(item);
+					await database.collection('productsHome').insertOne({
+						brand: item.brand,
+						model: item.model,
+						image: item.image,
+						price: item.price
+					});
 					res.sendStatus(201);
 				} else {
-					let stockArray = update[0].amount;
-					for(let i = 0; i<item.amount.length;i++){
-						stockArray.push(item.amount[i]);
-					}
-					await database.collection('products').updateOne({model: item.model}, {$set:{amount: stockArray}});
+					let itemsAmount = update[0].amount;
+					itemsAmount += item.amount;
+					await database.collection('products').updateOne({model: item.model, size: item.size}, {$set:{amount: itemsAmount}});
 					res.sendStatus(201);
 				}
 			} else {
