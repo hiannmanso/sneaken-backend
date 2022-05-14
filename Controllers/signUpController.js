@@ -17,7 +17,13 @@ export async function signUpPOST(req, res) {
 
 		const user = await database.collection('accounts').insertOne({
 			name,
+			lastname: '',
 			email,
+			cpf: '',
+			sex: '',
+			birtday: '',
+			cellphone: '',
+
 			password: encryptedPassword,
 		});
 		res.status(200).send(`conta criada com sucesso! infos: ${user}`);

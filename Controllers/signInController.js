@@ -49,3 +49,30 @@ export async function signInGET(req, res) {
 		);
 	}
 }
+
+export async function signInPUT(req, res) {
+	const { name, lastname, email, cpf, sex, birtday, cellphone } = req.body;
+	try {
+		const setUserInfos = await database
+			.collection('accounts')
+			.findOneAndUpdate(
+				{ email },
+				{
+					$set: {
+						name,
+						lastname,
+						email,
+						cpf,
+						sex,
+						birtday,
+						cellphone,
+					},
+				}
+			);
+		res.status(200).send(`informações de usuário trocadas com sucesso.`);
+	} catch (error) {
+		res.status(400).send(
+			`error ao alterar informações de usuário: ${error}`
+		);
+	}
+}
