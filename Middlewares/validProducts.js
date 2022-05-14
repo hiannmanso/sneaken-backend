@@ -5,11 +5,8 @@ export async function validProducts(req, res, next){
     let itemSchema = Joi.object({
         brand: Joi.string().min(1).required(),
         model: Joi.string().min(1).required(),
-        amount: Joi.array().items(Joi.object({
-            brand: Joi.string().min(1).required(),
-            model: Joi.string().min(1).required(),
-            size: Joi.number().required()
-        })),
+        amount: Joi.number().min(0).required(),
+        size: Joi.string().min(1).required(),
         price: Joi.string().min(1).required(),
         color: Joi.string().min(1).required(),
         image: Joi.string().min(1).required(),
