@@ -2,66 +2,59 @@ import { ObjectId } from 'mongodb';
 import database from '../database.js';
 
 export async function mySneakersPOST(req, res) {
-	const { brand, model, amount, price, size } = req.body;
-	const { userID, name } = req.headers;
-
-	//627c510511dfd0d3b9651510 id pra teste
-	//hiann name pra teste
-	//email:hiaann@hiann.com
-	//password:hiann
-	try {
-		const sneaker = await database
-			.collection('products')
-			.findOne({ brand, model, size, color });
-		console.log(sneaker);
-		if (parseInt(sneaker.amount) === 0)
-			return res.status(400).send(`Produto esgotado!`);
-		if (parseInt(sneaker.amount) > amount) {
-			return res
-				.status(400)
-				.send(
-					`Não temos mais essa quantidade de tenis no nosso estoque. tente novamente`
-				);
+	const item = req.body;
+	const { authorization } = req.headers;
+	const token = authorization?.replace('Bearer', '').trim();
+	if(token){
+		try {
+			let user = await database.collection('session').find({token: token}).toArray();
+			if(user.length !== 0){
+				const sneaker = await database
+					.collection('products')
+					.findOne({id: item.id, size: item.size});
+				if (sneaker.amount === 0){
+					return res.status(400).send(`Produto esgotado!`);
+				} else {
+					const insertSneaker = await database
+					.collection('mysneakers')
+					.insertOne({
+						userInfos: {userId: user._id},
+						sneakerInfos: {
+							brand: item.brand,
+							model: item.model,
+							price: item.price,
+							size: item.size
+						},
+					});
+				res.status(200).send(`item adicionado ao carrinho: ${insertSneaker}`);	
+				}
+			} else {
+				res.sendStatus(404);
+			}
+		} catch (error) {
+			res.status(400).send(`erro ao adicionar item ao carrinho : ${error}`);
 		}
-		const insertSneaker = await database
-			.collection('mysneakers')
-			.insertOne({
-				userInfos: { userID, name },
-				sneakerInfos: {
-					brand,
-					model,
-					amount,
-					price,
-					size,
-				},
-			});
-		res.status(200).send(`item adicionado ao carrinho: ${insertSneaker}`);
-	} catch (error) {
-		res.status(400).send(`erro ao adicionar item ao carrinho : ${error}`);
+	} else {
+		res.sendStatus(422);
 	}
 }
 export async function mySneakersGET(req, res) {
-	const { userID } = req.headers;
-	const sneakerSoldOff = [];
-	try {
-		const my_sneakers = await database
-			.collection('mysneakers')
-			.find({ userID })
-			.toArray();
-
-		//fazer uma validação para ver se ainda tem o tenis no estoque
-		for (let sneaker of my_sneakers) {
-			if (sneaker.sneakerInfos.amount === 0) {
-				sneakerSoldOff.push(sneaker);
-				console.log(sneakerSoldOff);
+	const { authorization } = req.headers;
+	const token = authorization?.replace('Bearer', '').trim();
+	if(token){
+		try {
+			let user = await database.collection('session').find({token: token}).toArray();
+			if(user.length !== 0){
+				let mySneaker = await database.collection('mysneakers').find({userInfos:{userId: user.userId}}).toArray();
+				res.send(mySneaker);
+			} else {
+				res.sendStatus(404);
 			}
+		} catch (error) {
+			res.status(400).send(`erro em buscar seus itens: ${error}`);
 		}
-
-		if (!my_sneakers)
-			return res.status(400).send(`Seu carrinho está vazio!`);
-		res.status(200).send(my_sneakers);
-	} catch (error) {
-		res.status(400).send(`erro em buscar seus itens: ${error}`);
+	} else {
+		res.sendStatus(422);
 	}
 }
 export async function mySneakersDELETE(req, res) {
