@@ -18,7 +18,7 @@ export async function mySneakersPOST(req, res) {
 					const insertSneaker = await database
 					.collection('mysneakers')
 					.insertOne({
-						userInfos: {userId: user._id},
+						userInfos: {userID: user[0].userId},
 						sneakerInfos: {
 							brand: item.brand,
 							model: item.model,
@@ -41,11 +41,13 @@ export async function mySneakersPOST(req, res) {
 export async function mySneakersGET(req, res) {
 	const { authorization } = req.headers;
 	const token = authorization?.replace('Bearer', '').trim();
+	console.log(token);
 	if(token){
 		try {
 			let user = await database.collection('session').find({token: token}).toArray();
+			console.log(user);
 			if(user.length !== 0){
-				let mySneaker = await database.collection('mysneakers').find({userInfos:{userId: user.userId}}).toArray();
+				let mySneaker = await database.collection('mysneakers').find({userInfos:{userID: user[0].userId}}).toArray();
 				res.send(mySneaker);
 			} else {
 				res.sendStatus(404);
