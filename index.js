@@ -7,6 +7,7 @@ import signInRouter from './Routers/signInRouter.js';
 import signUpRouter from './Routers/signUpRouter.js';
 import mySneakersRouter from './Routers/mySneakersRouter.js';
 import productsRouter from './Routers/productsRouter.js';
+import ordersRouter from './Routers/ordersRouter.js';
 
 dotenv.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(signUpRouter);
 app.use(signInRouter);
 app.use(mySneakersRouter);
 app.use(productsRouter);
+app.use(ordersRouter);
 
 app.listen(process.env.PORT, () => {
 	console.log(
