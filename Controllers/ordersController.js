@@ -34,7 +34,23 @@ export async function ordersPOST(req, res){
                     res.sendStatus(409);
                 } else {
                     //retirada de produtos do estoque e finalização do pedido
-                    res.sendStatus(200);
+                    let stockError = 0;
+                    for(let z = 0; z<orders.products.length;z++){
+                        let stock = await database.collection('products').find({model: orders.products[z].model, size: orders.products[z].size}).toArray();
+                        if(stock.length === 0){
+                            stockError = 1;
+                            break; 
+                        } else {
+                            let newAmount = stock[0].amount - orders.products[z].amount;
+                            await database.collection('products').updateOne({model: orders.products[z].model, size: orders.products[z].size}, { $set:{ amount: newAmount } });
+                        }
+                    }
+                    if(stockError !== 0){
+                        res.sendStatus(401);
+                    } else {
+                        await database.collection('orders').insertOne(orders);
+                        res.sendStatus(201);
+                    }
                 }
             } else {
                 res.sendStatus(404);
