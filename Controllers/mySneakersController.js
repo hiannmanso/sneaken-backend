@@ -10,7 +10,7 @@ export async function mySneakersPOST(req, res) {
 			if(user.length !== 0){
 				const sneaker = await database
 					.collection('products')
-					.findOne({id: item.id, size: item.size});
+					.findOne({model: item.model, size: item.size});
 				if (sneaker.amount === 0){
 					return res.status(400).send(`Produto esgotado!`);
 				} else {
