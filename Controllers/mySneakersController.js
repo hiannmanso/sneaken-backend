@@ -22,7 +22,8 @@ export async function mySneakersPOST(req, res) {
 							brand: item.brand,
 							model: item.model,
 							price: item.price,
-							size: item.size
+							size: item.size,
+							amount: 1
 						},
 					});
 				res.status(200).send(`item adicionado ao carrinho: ${insertSneaker}`);	
