@@ -9,7 +9,7 @@ export default function validOrder(req, res, next){
         birth: Joi.string().min(1).required(),
         payment: Joi.string().min(1).required(),
         products: Joi.array().items(Joi.object({
-            id: Joi.string().min(1).required(),
+            brand: Joi.string().min(1).required(),
             size: Joi.string().min(1).required(),
             model: Joi.string().min(1).required(),
             amount: Joi.number().required(),
