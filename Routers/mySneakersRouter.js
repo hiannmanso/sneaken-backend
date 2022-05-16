@@ -8,7 +8,7 @@ import validRequestMySneakers from '../Middlewares/validRequestMySneakers.js';
 
 const mySneakersRouter = express.Router();
 
-mySneakersRouter.post('/my_sneakers', validRequestMySneakers, mySneakersPOST);
+mySneakersRouter.post('/my_sneakers', mySneakersPOST);
 mySneakersRouter.get('/my_sneakers', mySneakersGET);
 mySneakersRouter.delete('/my_sneakers', mySneakersDELETE);
 //mySneakersRouter.put('/my_sneakers', mySneakersPUT);

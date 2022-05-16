@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import database from '../database.js';
 
 export async function mySneakersPOST(req, res) {
@@ -18,7 +17,7 @@ export async function mySneakersPOST(req, res) {
 					const insertSneaker = await database
 					.collection('mysneakers')
 					.insertOne({
-						userInfos: {userId: user._id},
+						userInfos: {userID: user[0].userId},
 						sneakerInfos: {
 							brand: item.brand,
 							model: item.model,
@@ -45,7 +44,7 @@ export async function mySneakersGET(req, res) {
 		try {
 			let user = await database.collection('session').find({token: token}).toArray();
 			if(user.length !== 0){
-				let mySneaker = await database.collection('mysneakers').find({userInfos:{userId: user.userId}}).toArray();
+				let mySneaker = await database.collection('mysneakers').find({userInfos:{userID: user[0].userId}}).toArray();
 				res.send(mySneaker);
 			} else {
 				res.sendStatus(404);
@@ -58,17 +57,30 @@ export async function mySneakersGET(req, res) {
 	}
 }
 export async function mySneakersDELETE(req, res) {
-	const { sneakerID } = req.headers;
-
-	try {
-		const deletedSneaker = await database
-			.collection('mysneakers')
-			.findOneAndDelete({ _id: new ObjectId(sneakerID) });
-		if (deletedSneaker.deletedCount !== 1)
-			return res.status(400).send(`Item não deletado: ${deletedSneaker}`);
-		res.status(400).send(`Item deletado com sucesso!`);
-	} catch (error) {
-		res.status(400).send(`problema ao deletar item: ${error}`);
+	const item = req.body;
+	const { authorization } = req.headers;
+	const token = authorization?.replace('Bearer', '').trim();
+	if(token){
+		try{
+			let user = await database.collection('session').find({token: token}).toArray();
+			if(user.length !== 0){
+				let sneakers = await database.collection('mysneakers').find({userInfos:{userID: user[0].userId}}).toArray();
+				for(let i=0;i<sneakers.length;i++){
+					if(sneakers[i].sneakerInfos.model === item.model && sneakers[i].sneakerInfos.size === item.size){
+						await database.collection('mysneakers').deleteOne({_id: sneakers[i]._id});
+						break;
+					}
+				}
+				res.sendStatus(200);				
+			} else {
+				res.sendStatus(404);
+			}
+		} catch(e){
+			console.log(e);
+			res.sendStatus(500);
+		}
+	} else {
+		res.sendStatus(422);
 	}
 }
 
